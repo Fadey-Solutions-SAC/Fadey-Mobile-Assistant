@@ -1,0 +1,64 @@
+name: Android Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Decode keystore
+        if: ${{ secrets.KEYSTORE_B64 != '' }}
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > app/release.keystore
+
+      - name: Grant gradlew
+        run: chmod +x gradlew || true
+
+      - name: Assemble release
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -f app/release.keystore ] && [ -n "$KEYSTORE_PASSWORD" ]; then
+            ./gradlew assembleRelease \
+              -Pandroid.injected.signing.store.file=$PWD/app/release.keystore \
+              -Pandroid.injected.signing.store.password="$KEYSTORE_PASSWORD" \
+              -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
+              -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
+          else
+            ./gradlew assembleRelease
+          fi
+
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          APK=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          cp "$APK" dist/Fadey-Mobile-Assistant.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Fadey-Mobile-Assistant-apk
+          path: dist/Fadey-Mobile-Assistant.apk
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Fadey-Mobile-Assistant.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

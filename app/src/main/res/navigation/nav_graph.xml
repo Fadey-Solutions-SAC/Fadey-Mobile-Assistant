@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="sac.fadey.mobileassistant.ui.HomeFragment"
+        android:label="@string/nav_home"
+        app:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/printersFragment"
+        android:name="sac.fadey.mobileassistant.ui.PrintersFragment"
+        android:label="@string/nav_printers"
+        app:layout="@layout/fragment_printers" />
+    <fragment
+        android:id="@+id/billingFragment"
+        android:name="sac.fadey.mobileassistant.ui.BillingFragment"
+        android:label="@string/nav_billing"
+        app:layout="@layout/fragment_billing" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="sac.fadey.mobileassistant.ui.HistoryFragment"
+        android:label="@string/nav_history"
+        app:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/diagFragment"
+        android:name="sac.fadey.mobileassistant.ui.DiagFragment"
+        android:label="@string/nav_diag"
+        app:layout="@layout/fragment_diag" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="sac.fadey.mobileassistant.ui.SettingsFragment"
+        android:label="@string/nav_settings"
+        app:layout="@layout/fragment_settings" />
+</navigation>
