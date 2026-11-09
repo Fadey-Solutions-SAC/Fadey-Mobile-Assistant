@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Material BottomNavigationView admite máximo 5 ítems; Diag va desde Inicio. -->
     <item android:id="@+id/homeFragment" android:title="@string/nav_home" android:icon="@android:drawable/ic_menu_compass" />
     <item android:id="@+id/printersFragment" android:title="@string/nav_printers" android:icon="@android:drawable/ic_menu_share" />
     <item android:id="@+id/billingFragment" android:title="@string/nav_billing" android:icon="@android:drawable/ic_menu_agenda" />
     <item android:id="@+id/historyFragment" android:title="@string/nav_history" android:icon="@android:drawable/ic_menu_recent_history" />
-    <item android:id="@+id/diagFragment" android:title="@string/nav_diag" android:icon="@android:drawable/ic_menu_info_details" />
     <item android:id="@+id/settingsFragment" android:title="@string/nav_settings" android:icon="@android:drawable/ic_menu_preferences" />
 </menu>

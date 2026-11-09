@@ -2,28 +2,40 @@ package sac.fadey.mobileassistant.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+/** Preferencias cifradas con fallback plano (algunos OEM / Xiaomi fallan con MasterKey). */
 public final class SecureStore {
+    private static final String TAG = "SecureStore";
     private static final String PREFS = "fadey_secure";
+    private static final String PREFS_FALLBACK = "fadey_secure_fallback";
     private final SharedPreferences prefs;
 
     public SecureStore(Context context) {
+        SharedPreferences encrypted = tryEncrypted(context);
+        prefs = encrypted != null
+                ? encrypted
+                : context.getApplicationContext().getSharedPreferences(PREFS_FALLBACK, Context.MODE_PRIVATE);
+    }
+
+    private static SharedPreferences tryEncrypted(Context context) {
         try {
-            MasterKey key = new MasterKey.Builder(context)
+            MasterKey key = new MasterKey.Builder(context.getApplicationContext())
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build();
-            prefs = EncryptedSharedPreferences.create(
-                    context,
+            return EncryptedSharedPreferences.create(
+                    context.getApplicationContext(),
                     PREFS,
                     key,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
-        } catch (Exception e) {
-            throw new IllegalStateException("No se pudo abrir almacenamiento cifrado", e);
+        } catch (Throwable t) {
+            Log.w(TAG, "EncryptedSharedPreferences no disponible, usando fallback", t);
+            return null;
         }
     }
 

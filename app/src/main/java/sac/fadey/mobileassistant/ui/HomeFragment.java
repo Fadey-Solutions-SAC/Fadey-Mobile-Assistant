@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -32,14 +33,18 @@ public class HomeFragment extends Fragment {
         TextView txtLink = view.findViewById(R.id.txtLink);
         MaterialButton btnStart = view.findViewById(R.id.btnStart);
         MaterialButton btnStop = view.findViewById(R.id.btnStop);
+        MaterialButton btnDiag = view.findViewById(R.id.btnDiag);
 
         Runnable refresh = () -> {
+            AssistantForegroundService.start(requireContext());
             String ip = LocalHttpServer.detectLanIp();
             int port = BuildConfig.DEFAULT_HTTP_PORT;
-            txtStatus.setText("Servicio en primer plano listo");
+            txtStatus.setText("Servicio en primer plano activo");
             txtEndpoint.setText("LAN: http://" + (ip.isEmpty() ? "IP" : ip) + ":" + port
                     + "\nHealth: /health · service=" + BuildConfig.ASSISTANT_SERVICE_NAME);
-            boolean linked = FadeyApp.get().secureStore().isLinked();
+            boolean linked = FadeyApp.get() != null
+                    && FadeyApp.get().secureStore() != null
+                    && FadeyApp.get().secureStore().isLinked();
             txtLink.setText(linked
                     ? "Nube vinculada: " + FadeyApp.get().secureStore().getApiBase()
                     : "Sin vínculo nube (configure en Ajustes o POST /api/efact/cloud-link)");
@@ -51,8 +56,19 @@ public class HomeFragment extends Fragment {
         });
         btnStop.setOnClickListener(v -> {
             AssistantForegroundService.stop(requireContext());
-            FadeyApp.get().secureStore().setServiceEnabled(false);
+            if (FadeyApp.get() != null && FadeyApp.get().secureStore() != null) {
+                FadeyApp.get().secureStore().setServiceEnabled(false);
+            }
             txtStatus.setText("Servicio detenido");
         });
+        btnDiag.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.diagFragment));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AssistantForegroundService.start(requireContext());
     }
 }
+

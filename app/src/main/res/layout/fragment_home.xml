@@ -54,5 +54,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/stop_service" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDiag"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/nav_diag" />
     </LinearLayout>
 </ScrollView>
+

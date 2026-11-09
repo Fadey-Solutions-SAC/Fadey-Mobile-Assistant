@@ -1,9 +1,14 @@
 package sac.fadey.mobileassistant.ui;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +25,8 @@ import sac.fadey.mobileassistant.R;
 import sac.fadey.mobileassistant.service.AssistantForegroundService;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,13 +34,28 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host);
-        if (host != null) {
-            NavController nav = host.getNavController();
-            BottomNavigationView bottom = findViewById(R.id.bottom_nav);
-            NavigationUI.setupWithNavController(bottom, nav);
+        try {
+            NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host);
+            if (host != null) {
+                NavController nav = host.getNavController();
+                BottomNavigationView bottom = findViewById(R.id.bottom_nav);
+                NavigationUI.setupWithNavController(bottom, nav);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "Nav setup", t);
         }
         requestRuntimePermissions();
+        ensureServiceRunning();
+        maybeRequestBatteryExemption();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ensureServiceRunning();
+    }
+
+    private void ensureServiceRunning() {
         AssistantForegroundService.start(this);
     }
 
@@ -56,6 +78,21 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!need.isEmpty()) {
             ActivityCompat.requestPermissions(this, need.toArray(new String[0]), 100);
+        }
+    }
+
+    private void maybeRequestBatteryExemption() {
+        try {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (pm == null) return;
+            String pkg = getPackageName();
+            if (pm.isIgnoringBatteryOptimizations(pkg)) return;
+            Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            i.setData(Uri.parse("package:" + pkg));
+            startActivity(i);
+        } catch (Throwable t) {
+            Log.w(TAG, "battery exemption", t);
         }
     }
 }
