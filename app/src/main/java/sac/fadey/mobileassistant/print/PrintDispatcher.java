@@ -35,6 +35,15 @@ public final class PrintDispatcher {
         String tipo = cfg.optString("tipo", "bluetooth").toLowerCase();
         String address = cfg.optString("address", cfg.optString("nombre", ""));
         int port = cfg.optInt("port", 9100);
+        if (address == null || address.trim().isEmpty()
+                || "caja".equalsIgnoreCase(address.trim())
+                || "cocina".equalsIgnoreCase(address.trim())
+                || "bar".equalsIgnoreCase(address.trim())) {
+            throw new IllegalStateException(
+                    "Sin impresora configurada. En APK → Impresoras guarde tipo (bluetooth/wifi) y dirección MAC o IP. "
+                            + "La cola del sistema ya funciona; al conectar la térmica imprimirá sola."
+            );
+        }
         switch (tipo) {
             case "wifi":
             case "red":

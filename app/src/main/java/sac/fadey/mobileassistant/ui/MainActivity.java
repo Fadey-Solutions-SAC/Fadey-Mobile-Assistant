@@ -75,7 +75,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ensureServiceRunning() {
-        AssistantForegroundService.start(this);
+        new Thread(() -> {
+            try {
+                sac.fadey.mobileassistant.cloud.OperationSync.sync(getApplicationContext());
+            } catch (Throwable t) {
+                AssistantForegroundService.start(getApplicationContext());
+            }
+        }, "main-op-sync").start();
     }
 
     private void requestRuntimePermissions() {

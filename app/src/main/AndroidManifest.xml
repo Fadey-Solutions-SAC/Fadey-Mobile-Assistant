@@ -58,5 +58,13 @@
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".service.OperationWatchReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="sac.fadey.mobileassistant.ACTION_OPERATION_WATCH" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -15,7 +15,9 @@ public final class BluetoothPrinter {
 
     public static void print(Context context, String macAddress, byte[] data) throws Exception {
         if (macAddress == null || macAddress.trim().isEmpty()) {
-            throw new IllegalArgumentException("Dirección Bluetooth vacía");
+            throw new IllegalArgumentException(
+                    "Configure la MAC Bluetooth en Impresoras (ej. AA:BB:CC:DD:EE:FF). El ticket queda listo; falta la impresora."
+            );
         }
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter == null) throw new IllegalStateException("Bluetooth no disponible");

@@ -33,6 +33,16 @@ public final class CloudPoller {
     public static void pollOnce(Context context) {
         SecureStore store = FadeyApp.get().secureStore();
         if (!store.isLinked()) return;
+        // Cada ciclo confirma con el servidor si el sistema sigue en operación.
+        try {
+            OperationSync.Result op = OperationSync.sync(context);
+            if (op.ok && !op.operating && store.isFollowSystemOperation()) {
+                Log.i(TAG, "sistema cerrado · se omite cola");
+                return;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "operation: " + e.getMessage());
+        }
         String apiBase = store.getApiBase();
         String token = store.getToken();
         try {
@@ -108,16 +118,19 @@ public final class CloudPoller {
                 postJson(apiBase + "/print-jobs/" + id + "/result", token, ok);
                 db.jobDao().updateStatus("print-" + id, "printed", ok.toString(), System.currentTimeMillis());
             } catch (Exception e) {
+                Log.w(TAG, "print job " + id + ": " + e.getMessage());
+                FadeyApp.get().secureStore().setLastError("print: " + e.getMessage());
                 if (!printed) {
-                    try {
-                        postJson(apiBase + "/print-jobs/" + id + "/release", token, new JSONObject());
-                    } catch (Exception ignored) {}
                     try {
                         JSONObject fail = new JSONObject().put("ok", false).put("error", e.getMessage());
                         postJson(apiBase + "/print-jobs/" + id + "/result", token, fail);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                        try {
+                            postJson(apiBase + "/print-jobs/" + id + "/release", token, new JSONObject());
+                        } catch (Exception ignored2) {}
+                    }
                 }
-                throw e;
+                /* Sigue con el siguiente trabajo: sin MAC/IP la cola igual avanza. */
             }
         }
     }

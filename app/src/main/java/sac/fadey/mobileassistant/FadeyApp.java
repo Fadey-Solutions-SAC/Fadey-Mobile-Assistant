@@ -26,8 +26,20 @@ public class FadeyApp extends Application {
             secureStore = new SecureStore(this);
             printerConfigStore = new PrinterConfigStore(secureStore);
             database = AppDatabase.get(this);
-            if (secureStore.isServiceEnabled()) {
-                // Tras actualización / proceso en memoria: reactivar FGS sin esperar a la UI.
+            sac.fadey.mobileassistant.service.OperationWatchScheduler.ensureScheduled(this);
+            if (secureStore.isLinked()) {
+                // Consulta al servidor: si hay caja/POS en operación, arranca el FGS.
+                new Thread(() -> {
+                    try {
+                        sac.fadey.mobileassistant.cloud.OperationSync.sync(FadeyApp.this);
+                    } catch (Throwable t) {
+                        Log.w(TAG, "operation sync", t);
+                        if (secureStore.isServiceEnabled()) {
+                            AssistantForegroundService.start(FadeyApp.this);
+                        }
+                    }
+                }, "app-op-sync").start();
+            } else if (secureStore.isServiceEnabled()) {
                 AssistantForegroundService.start(this);
             }
         } catch (Throwable t) {

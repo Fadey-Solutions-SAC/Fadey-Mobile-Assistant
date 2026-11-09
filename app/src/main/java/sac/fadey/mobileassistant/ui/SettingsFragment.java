@@ -58,14 +58,27 @@ public class SettingsFragment extends Fragment {
                     }
                     store.setApiBase(normApi);
                     store.setToken(normTok);
+                    store.setFollowSystemOperation(true);
                     api.setText(normApi);
                     msg.setText(probe.message);
                     Toast.makeText(requireContext(), "Sistema vinculado", Toast.LENGTH_SHORT).show();
+                    sac.fadey.mobileassistant.service.OperationWatchScheduler.ensureScheduled(requireContext());
+                    new Thread(() -> {
+                        sac.fadey.mobileassistant.cloud.OperationSync.Result op =
+                                sac.fadey.mobileassistant.cloud.OperationSync.sync(requireContext());
+                        main.post(() -> {
+                            if (op.ok) {
+                                msg.setText(probe.message + "\n" + op.detail);
+                            }
+                        });
+                    }, "link-op-sync").start();
                 });
             }, "fadey-link-probe").start();
         });
         view.findViewById(R.id.btnUnlink).setOnClickListener(v -> {
             store.unlink();
+            sac.fadey.mobileassistant.service.OperationWatchScheduler.cancel(requireContext());
+            sac.fadey.mobileassistant.service.AssistantForegroundService.stop(requireContext());
             api.setText("");
             token.setText("");
             msg.setText("Desvinculado");

@@ -28,9 +28,17 @@ public class BootCompletedReceiver extends BroadcastReceiver {
                         enabled = FadeyApp.get().secureStore().isServiceEnabled();
                     }
                 } catch (Throwable ignored) {}
+                Context app = context.getApplicationContext();
+                sac.fadey.mobileassistant.service.OperationWatchScheduler.ensureScheduled(app);
                 if (enabled) {
-                    AssistantForegroundService.start(context.getApplicationContext());
+                    AssistantForegroundService.start(app);
                 }
+                // Preguntar al servidor si el sistema está en operación (reactiva tras cerrar/abrir caja).
+                new Thread(() -> {
+                    try {
+                        sac.fadey.mobileassistant.cloud.OperationSync.sync(app);
+                    } catch (Throwable ignored) {}
+                }, "boot-op-sync").start();
             } catch (Throwable t) {
                 Log.e(TAG, "No se pudo iniciar servicio", t);
             }

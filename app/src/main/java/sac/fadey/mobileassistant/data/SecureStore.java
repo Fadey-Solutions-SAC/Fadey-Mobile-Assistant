@@ -79,6 +79,15 @@ public final class SecureStore {
     public boolean isServiceEnabled() { return prefs.getBoolean("service_enabled", true); }
     public void setServiceEnabled(boolean v) { prefs.edit().putBoolean("service_enabled", v).apply(); }
 
+    /** Si true, el APK arranca/para el servicio según caja abierta / heartbeat POS. */
+    public boolean isFollowSystemOperation() { return prefs.getBoolean("follow_system_op", true); }
+    public void setFollowSystemOperation(boolean v) { prefs.edit().putBoolean("follow_system_op", v).apply(); }
+
+    public boolean getLastOperationOperating() { return prefs.getBoolean("last_op_operating", false); }
+    public void setLastOperationOperating(boolean v) { prefs.edit().putBoolean("last_op_operating", v).apply(); }
+    public String getLastOperationDetail() { return prefs.getString("last_op_detail", ""); }
+    public void setLastOperationDetail(String v) { prefs.edit().putString("last_op_detail", safe(v)).apply(); }
+
     public void unlink() {
         prefs.edit()
                 .remove("api_base")
