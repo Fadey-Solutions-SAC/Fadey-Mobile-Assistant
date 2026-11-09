@@ -35,4 +35,6 @@ APK: `app/build/outputs/apk/release/`.
 
 ## Releases
 
-GitHub Releases del repo `Fadey-Solutions-SAC/Fadey-Mobile-Assistant` (asset `Fadey-Mobile-Assistant.apk`).
+GitHub Releases del repo `Fadey-Solutions-SAC/Fadey-Mobile-Assistant` (asset `Fadey-Mobile-Assistant.apk` cuando CI firme).
+
+Plantilla CI: `docs/ci/android-release.yml` → copiar a `.github/workflows/` con un token que tenga scope `workflow` y secrets `KEYSTORE_B64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
