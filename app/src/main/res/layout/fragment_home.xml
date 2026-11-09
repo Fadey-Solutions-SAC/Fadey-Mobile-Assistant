@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fadey_bg"
     android:padding="16dp">
 
     <LinearLayout
@@ -23,13 +24,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textSize="16sp" />
+            android:textColor="@color/fadey_navy"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtEndpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textColor="@color/fadey_navy"
             android:textIsSelectable="true"
             android:textSize="14sp" />
 
@@ -38,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textColor="@color/fadey_text_secondary"
             android:textSize="14sp" />
 
         <com.google.android.material.button.MaterialButton
@@ -49,7 +54,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStop"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Fadey.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -57,11 +62,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDiag"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Fadey.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/nav_diag" />
     </LinearLayout>
 </ScrollView>
-

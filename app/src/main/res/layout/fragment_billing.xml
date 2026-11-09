@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fadey_bg"
     android:padding="16dp">
 
     <LinearLayout
@@ -10,18 +11,37 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Certificado SUNAT (.pfx)"
+            android:textColor="@color/fadey_navy"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/txtCertStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/fadey_text_secondary"
             android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Contraseña del archivo .pfx"
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
 
         <EditText
             android:id="@+id/editPfxPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:hint="Contraseña del .pfx"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/fadey_navy"
+            android:textColorHint="@color/fadey_hint" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnImportPfx"
@@ -32,7 +52,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnClearPfx"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Fadey.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -42,6 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="El .pfx nunca se embebe en el APK. También puede llegar pfx_base64 en el sale de pending-local." />
+            android:text="El .pfx se guarda cifrado en el teléfono (nunca en el APK). También puede llegar pfx_base64 desde el servidor POS al emitir (pending-local)."
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
     </LinearLayout>
 </ScrollView>

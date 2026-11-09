@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fadey_bg"
     android:orientation="vertical"
     android:padding="12dp">
 
@@ -21,7 +22,9 @@
             android:id="@+id/txtHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Sin trabajos aún."
+            android:textColor="@color/fadey_navy"
             android:textIsSelectable="true"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
     </ScrollView>
 </LinearLayout>

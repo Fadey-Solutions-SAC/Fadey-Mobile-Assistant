@@ -40,14 +40,16 @@ public class HomeFragment extends Fragment {
             String ip = LocalHttpServer.detectLanIp();
             int port = BuildConfig.DEFAULT_HTTP_PORT;
             txtStatus.setText("Servicio en primer plano activo");
-            txtEndpoint.setText("LAN: http://" + (ip.isEmpty() ? "IP" : ip) + ":" + port
-                    + "\nHealth: /health · service=" + BuildConfig.ASSISTANT_SERVICE_NAME);
+            String lan = "http://" + (ip.isEmpty() ? "IP_WIFI" : ip) + ":" + port;
+            txtEndpoint.setText("URL para POS en misma Wi‑Fi (PC):\n" + lan
+                    + "\n\nCon datos móviles / POS HTTPS: use pestaña Configuración (API + JWT)."
+                    + "\nHealth: " + lan + "/health");
             boolean linked = FadeyApp.get() != null
                     && FadeyApp.get().secureStore() != null
                     && FadeyApp.get().secureStore().isLinked();
             txtLink.setText(linked
                     ? "Nube vinculada: " + FadeyApp.get().secureStore().getApiBase()
-                    : "Sin vínculo nube (configure en Ajustes o POST /api/efact/cloud-link)");
+                    : "Sin vínculo nube → Configuración → pegar API y token JWT");
         };
         refresh.run();
         btnStart.setOnClickListener(v -> {

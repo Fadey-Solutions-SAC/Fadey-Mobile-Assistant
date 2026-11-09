@@ -15,5 +15,6 @@ app/release.keystore
 local.properties
 _gen_sources.py
 .github_local_backup/
+dist/
 
 .github_local_backup/

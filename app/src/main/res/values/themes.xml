@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.FadeyMobileAssistant" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#0F172A</item>
+    <!-- Light fijo: DayNight en Xiaomi deja texto blanco sobre fondo claro. -->
+    <style name="Theme.FadeyMobileAssistant" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/fadey_navy</item>
         <item name="colorPrimaryVariant">#1E293B</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSecondary">#2563EB</item>
-        <item name="android:statusBarColor">#0F172A</item>
+        <item name="colorSecondary">@color/fadey_blue</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">@color/fadey_navy</item>
+        <item name="android:colorBackground">@color/fadey_bg</item>
+        <item name="android:statusBarColor">@color/fadey_navy</item>
+        <item name="android:windowBackground">@color/fadey_bg</item>
+        <item name="android:textColorPrimary">@color/fadey_navy</item>
+        <item name="android:textColorSecondary">@color/fadey_text_secondary</item>
+        <item name="android:textColorHint">@color/fadey_hint</item>
+        <item name="android:editTextColor">@color/fadey_navy</item>
+        <item name="editTextStyle">@style/Widget.Fadey.EditText</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Fadey.Button.Outlined</item>
+        <item name="bottomNavigationStyle">@style/Widget.Fadey.BottomNav</item>
+    </style>
+
+    <style name="Widget.Fadey.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/fadey_navy</item>
+        <item name="android:textColorHint">@color/fadey_hint</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:backgroundTint">@color/fadey_blue</item>
+    </style>
+
+    <style name="Widget.Fadey.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/fadey_navy</item>
+        <item name="strokeColor">@color/fadey_navy</item>
+    </style>
+
+    <style name="Widget.Fadey.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_colors</item>
+        <item name="itemTextColor">@color/bottom_nav_colors</item>
+        <item name="android:background">#FFFFFF</item>
     </style>
 </resources>

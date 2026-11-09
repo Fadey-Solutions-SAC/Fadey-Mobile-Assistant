@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fadey_bg"
     android:padding="16dp">
 
     <LinearLayout
@@ -12,47 +13,89 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Módulo caja"
+            android:text="Impresora de caja (Bluetooth / Wi‑Fi / USB)"
+            android:textColor="@color/fadey_navy"
+            android:textSize="16sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Tipo de conexión"
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
 
         <EditText
             android:id="@+id/editTipo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="tipo: bluetooth | wifi | usb"
-            android:inputType="text" />
+            android:hint="bluetooth | wifi | usb"
+            android:inputType="text"
+            android:textColor="@color/fadey_navy"
+            android:textColorHint="@color/fadey_hint" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Dirección (MAC Bluetooth / IP Wi‑Fi / hint USB)"
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
 
         <EditText
             android:id="@+id/editAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="MAC / IP / USB hint"
-            android:inputType="text" />
+            android:hint="Ej. AA:BB:CC:DD:EE:FF o 192.168.1.50"
+            android:inputType="text"
+            android:textColor="@color/fadey_navy"
+            android:textColorHint="@color/fadey_hint" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Puerto TCP (Wi‑Fi, normalmente 9100)"
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
 
         <EditText
             android:id="@+id/editPort"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Puerto TCP (9100)"
-            android:inputType="number" />
+            android:hint="9100"
+            android:inputType="number"
+            android:textColor="@color/fadey_navy"
+            android:textColorHint="@color/fadey_hint" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Ancho de papel (58 o 80 mm)"
+            android:textColor="@color/fadey_text_secondary"
+            android:textSize="13sp" />
 
         <EditText
             android:id="@+id/editWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ancho 58 o 80"
-            android:inputType="number" />
+            android:hint="80"
+            android:inputType="number"
+            android:textColor="@color/fadey_navy"
+            android:textColorHint="@color/fadey_hint" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSavePrinter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:text="@string/save" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTestPrinter"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Fadey.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -62,6 +105,8 @@
             android:id="@+id/txtPrinterMsg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:textColor="@color/fadey_navy"
+            android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>

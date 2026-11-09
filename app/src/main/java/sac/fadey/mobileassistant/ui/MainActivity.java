@@ -47,6 +47,25 @@ public class MainActivity extends AppCompatActivity {
         requestRuntimePermissions();
         ensureServiceRunning();
         maybeRequestBatteryExemption();
+        maybePromptCloudLink();
+    }
+
+    private void maybePromptCloudLink() {
+        try {
+            if (sac.fadey.mobileassistant.FadeyApp.get() == null) return;
+            if (sac.fadey.mobileassistant.FadeyApp.get().secureStore().isLinked()) return;
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Vincular al servidor POS")
+                    .setMessage("El asistente debe usar la misma API y token del sistema (como en la PC). Abra Configuración, pegue la URL …/api y el JWT del cajero.")
+                    .setPositiveButton("Configuración", (d, w) -> {
+                        try {
+                            NavHostFragment host = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host);
+                            if (host != null) host.getNavController().navigate(R.id.settingsFragment);
+                        } catch (Throwable ignored) {}
+                    })
+                    .setNegativeButton("Después", null)
+                    .show();
+        } catch (Throwable ignored) {}
     }
 
     @Override

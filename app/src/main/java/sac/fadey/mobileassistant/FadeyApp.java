@@ -3,6 +3,8 @@ package sac.fadey.mobileassistant;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import sac.fadey.mobileassistant.data.AppDatabase;
 import sac.fadey.mobileassistant.data.PrinterConfigStore;
 import sac.fadey.mobileassistant.data.SecureStore;
@@ -18,6 +20,7 @@ public class FadeyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         instance = this;
         try {
             secureStore = new SecureStore(this);
