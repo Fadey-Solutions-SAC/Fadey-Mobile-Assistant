@@ -93,15 +93,19 @@ public class LocalHttpServer extends NanoHTTPD {
             }
             if ("POST".equals(method) && "/api/efact/cloud-link".equals(uri)) {
                 JSONObject body = readJson(session);
-                String apiBase = body.optString("apiBase", "").replaceAll("/$", "");
-                String token = body.optString("token", "");
+                String apiBase = sac.fadey.mobileassistant.cloud.ApiLinkHelper.normalizeApiBase(
+                        body.optString("apiBase", ""));
+                String token = sac.fadey.mobileassistant.cloud.ApiLinkHelper.normalizeToken(
+                        body.optString("token", ""));
                 if (apiBase.isEmpty() || token.isEmpty()) {
                     return json(Response.Status.BAD_REQUEST, new JSONObject().put("ok", false));
                 }
                 SecureStore store = FadeyApp.get().secureStore();
                 store.setApiBase(apiBase);
                 store.setToken(token);
-                return json(Response.Status.OK, new JSONObject().put("ok", true));
+                return json(Response.Status.OK, new JSONObject()
+                        .put("ok", true)
+                        .put("apiBase", apiBase));
             }
             if ("POST".equals(method) && ("/api/efact/emitir".equals(uri) || "/emitir".equals(uri))) {
                 JSONObject body = readJson(session);

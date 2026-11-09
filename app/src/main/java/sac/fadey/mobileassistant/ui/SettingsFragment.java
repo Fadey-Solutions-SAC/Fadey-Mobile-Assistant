@@ -1,6 +1,8 @@
 package sac.fadey.mobileassistant.ui;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +16,12 @@ import androidx.fragment.app.Fragment;
 
 import sac.fadey.mobileassistant.FadeyApp;
 import sac.fadey.mobileassistant.R;
+import sac.fadey.mobileassistant.cloud.ApiLinkHelper;
 import sac.fadey.mobileassistant.data.SecureStore;
 
 public class SettingsFragment extends Fragment {
+    private final Handler main = new Handler(Looper.getMainLooper());
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -31,12 +36,33 @@ public class SettingsFragment extends Fragment {
         SecureStore store = FadeyApp.get().secureStore();
         api.setText(store.getApiBase());
         token.setText(store.getToken());
+        if (store.isLinked()) {
+            msg.setText("Vínculo guardado · " + store.getApiBase());
+        }
 
         view.findViewById(R.id.btnSaveLink).setOnClickListener(v -> {
-            store.setApiBase(api.getText().toString());
-            store.setToken(token.getText().toString());
-            msg.setText(store.isLinked() ? "Vínculo guardado" : "Faltan apiBase o token");
-            Toast.makeText(requireContext(), "Guardado", Toast.LENGTH_SHORT).show();
+            String rawApi = api.getText().toString();
+            String rawTok = token.getText().toString();
+            String normApi = ApiLinkHelper.normalizeApiBase(rawApi);
+            String normTok = ApiLinkHelper.normalizeToken(rawTok);
+            msg.setText("Probando vínculo con el servidor…");
+            view.findViewById(R.id.btnSaveLink).setEnabled(false);
+            new Thread(() -> {
+                ApiLinkHelper.ProbeResult probe = ApiLinkHelper.probe(normApi, normTok);
+                main.post(() -> {
+                    view.findViewById(R.id.btnSaveLink).setEnabled(true);
+                    if (!probe.ok) {
+                        msg.setText(probe.message);
+                        Toast.makeText(requireContext(), "No se pudo vincular", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    store.setApiBase(normApi);
+                    store.setToken(normTok);
+                    api.setText(normApi);
+                    msg.setText(probe.message);
+                    Toast.makeText(requireContext(), "Sistema vinculado", Toast.LENGTH_SHORT).show();
+                });
+            }, "fadey-link-probe").start();
         });
         view.findViewById(R.id.btnUnlink).setOnClickListener(v -> {
             store.unlink();

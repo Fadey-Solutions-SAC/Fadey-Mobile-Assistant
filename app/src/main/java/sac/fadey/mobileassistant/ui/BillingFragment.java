@@ -78,6 +78,8 @@ public class BillingFragment extends Fragment {
 
     private void refresh() {
         boolean has = !FadeyApp.get().secureStore().getPfxBase64().isEmpty();
-        status.setText(has ? "Certificado .pfx cargado en almacenamiento cifrado" : "Sin certificado local");
+        status.setText(has
+                ? "Reserva local: .pfx cargado en el teléfono"
+                : "Modo normal: certificado del sistema (servidor) · sin .pfx local");
     }
 }

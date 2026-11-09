@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="1. Inicie sesión en el POS como cajero/admin.\n2. URL API (misma del sistema, termina en /api).\n3. Token JWT del login (Local Storage → token)."
+            android:text="1. En el POS (Impresión) pulse «Copiar vínculo Android».\n2. Pegue aquí la URL API y el token, o cópielos manualmente.\n3. Pulse Guardar: se prueba pending-local (igual que el asistente PC)."
             android:textColor="@color/fadey_navy"
             android:textSize="14sp" />
 

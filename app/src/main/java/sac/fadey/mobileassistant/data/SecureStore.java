@@ -40,10 +40,22 @@ public final class SecureStore {
     }
 
     public String getApiBase() { return prefs.getString("api_base", ""); }
-    public void setApiBase(String v) { prefs.edit().putString("api_base", safe(v).replaceAll("/$", "")).apply(); }
+    public void setApiBase(String v) {
+        String s = safe(v).replaceAll("/+$", "");
+        if (!s.isEmpty() && !s.matches("(?i).*/api$")) {
+            s = s + "/api";
+        }
+        prefs.edit().putString("api_base", s).apply();
+    }
 
     public String getToken() { return prefs.getString("jwt", ""); }
-    public void setToken(String v) { prefs.edit().putString("jwt", safe(v)).apply(); }
+    public void setToken(String v) {
+        String t = safe(v);
+        if (t.regionMatches(true, 0, "Bearer ", 0, 7)) {
+            t = t.substring(7).trim();
+        }
+        prefs.edit().putString("jwt", t).apply();
+    }
 
     public boolean isLinked() {
         return !getApiBase().isEmpty() && !getToken().isEmpty();
