@@ -10,8 +10,8 @@ android {
         applicationId "sac.fadey.mobileassistant"
         minSdk 26
         targetSdk 34
-        versionCode 101
-        versionName "1.0.1"
+        versionCode 102
+        versionName "1.0.2"
         buildConfigField "String", "ASSISTANT_SERVICE_NAME", '"resto-fadey-printing-assistant"'
         buildConfigField "int", "DEFAULT_HTTP_PORT", "3002"
     }
@@ -24,6 +24,9 @@ android {
                 storePassword System.getenv('KEYSTORE_PASSWORD') ?: 'fadeymobile'
                 keyAlias System.getenv('KEY_ALIAS') ?: 'fadey'
                 keyPassword System.getenv('KEY_PASSWORD') ?: 'fadeymobile'
+                enableV1Signing true
+                enableV2Signing true
+                enableV3Signing true
             }
         }
     }
@@ -37,8 +40,10 @@ android {
             }
         }
         debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix "-debug"
+            // Misma applicationId que release para no pelear con otra app en el teléfono
+            signingConfig signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()
+                    ? signingConfigs.release
+                    : signingConfigs.debug
         }
     }
 
