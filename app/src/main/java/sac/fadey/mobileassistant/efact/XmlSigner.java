@@ -81,7 +81,7 @@ public final class XmlSigner {
         Transforms transforms = new Transforms(doc);
         transforms.addTransform(Transforms.TRANSFORM_ENVELOPED_SIGNATURE);
         transforms.addTransform(Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-        sig.addDocument("", transforms, Constants.ALGO_ID_DIGEST_SHA256);
+        sig.addDocument("", transforms, "http://www.w3.org/2001/04/xmlenc#sha256");
         sig.addKeyInfo(km.certificate);
         sig.sign(km.privateKey);
         sig.getElement().setAttribute("Id", "SignatureSP");

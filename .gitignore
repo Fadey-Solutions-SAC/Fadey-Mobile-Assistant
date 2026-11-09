@@ -12,6 +12,8 @@
 *.aab
 *.keystore
 app/release.keystore
+local.properties
 _gen_sources.py
+.github_local_backup/
 
 .github_local_backup/

@@ -16,10 +16,25 @@ android {
         buildConfigField "int", "DEFAULT_HTTP_PORT", "3002"
     }
 
+    signingConfigs {
+        release {
+            def ks = file('release.keystore')
+            if (ks.exists()) {
+                storeFile ks
+                storePassword System.getenv('KEYSTORE_PASSWORD') ?: 'fadeymobile'
+                keyAlias System.getenv('KEY_ALIAS') ?: 'fadey'
+                keyPassword System.getenv('KEY_PASSWORD') ?: 'fadeymobile'
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingConfigs.release.storeFile != null && signingConfigs.release.storeFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             applicationIdSuffix ".debug"
