@@ -18,6 +18,8 @@ import sac.fadey.mobileassistant.FadeyApp;
 import sac.fadey.mobileassistant.R;
 import sac.fadey.mobileassistant.http.LocalHttpServer;
 import sac.fadey.mobileassistant.service.AssistantForegroundService;
+import sac.fadey.mobileassistant.update.AppUpdater;
+import sac.fadey.mobileassistant.update.InstallUpdateActivity;
 
 public class HomeFragment extends Fragment {
     @Nullable
@@ -34,6 +36,10 @@ public class HomeFragment extends Fragment {
         MaterialButton btnStart = view.findViewById(R.id.btnStart);
         MaterialButton btnStop = view.findViewById(R.id.btnStop);
         MaterialButton btnDiag = view.findViewById(R.id.btnDiag);
+        MaterialButton btnUpdate = view.findViewById(R.id.btnUpdate);
+        refreshUpdateButton(btnUpdate);
+        btnUpdate.setOnClickListener(v ->
+                startActivity(new android.content.Intent(requireContext(), InstallUpdateActivity.class)));
 
         Runnable refresh = () -> {
             String ip = LocalHttpServer.detectLanIp();
@@ -80,12 +86,23 @@ public class HomeFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.diagFragment));
     }
 
+    private void refreshUpdateButton(MaterialButton btnUpdate) {
+        if (btnUpdate == null || getContext() == null) return;
+        boolean ready = AppUpdater.hasReadyUpdate(requireContext());
+        btnUpdate.setVisibility(ready ? View.VISIBLE : View.GONE);
+        if (ready) {
+            String name = AppUpdater.readyName(requireContext());
+            btnUpdate.setText(name.isEmpty() ? "Instalar actualización" : ("Instalar " + name));
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         new Thread(() -> {
             try {
                 sac.fadey.mobileassistant.cloud.OperationSync.sync(requireContext());
+                AppUpdater.maybeCheck(requireContext());
             } catch (Throwable ignored) {}
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
@@ -95,6 +112,7 @@ public class HomeFragment extends Fragment {
                         TextView txtEndpoint = root.findViewById(R.id.txtEndpoint);
                         TextView txtLink = root.findViewById(R.id.txtLink);
                         if (txtStatus == null) return;
+                    refreshUpdateButton(root.findViewById(R.id.btnUpdate));
                         boolean linked = FadeyApp.get() != null
                                 && FadeyApp.get().secureStore() != null
                                 && FadeyApp.get().secureStore().isLinked();

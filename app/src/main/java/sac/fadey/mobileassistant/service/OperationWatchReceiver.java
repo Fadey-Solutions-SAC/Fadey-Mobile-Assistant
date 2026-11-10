@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import sac.fadey.mobileassistant.cloud.OperationSync;
+import sac.fadey.mobileassistant.update.AppUpdater;
 
 /** Despierta cada pocos minutos para preguntar al servidor si el sistema está en operación. */
 public class OperationWatchReceiver extends BroadcastReceiver {
@@ -29,6 +30,7 @@ public class OperationWatchReceiver extends BroadcastReceiver {
             try {
                 OperationSync.Result r = OperationSync.sync(app);
                 Log.i(TAG, "operating=" + r.operating + " ok=" + r.ok + " " + r.detail);
+                AppUpdater.maybeCheck(app);
             } catch (Throwable t) {
                 Log.w(TAG, "sync failed", t);
             } finally {

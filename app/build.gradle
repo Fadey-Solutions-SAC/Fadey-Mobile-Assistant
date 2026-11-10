@@ -2,16 +2,21 @@ plugins {
     id 'com.android.application'
 }
 
+def externalBuild = System.getenv("FADEY_BUILD_DIR")
+
 android {
     namespace 'sac.fadey.mobileassistant'
+    if (externalBuild) {
+        layout.buildDirectory.set(file(externalBuild))
+    }
     compileSdk 34
 
     defaultConfig {
         applicationId "sac.fadey.mobileassistant"
         minSdk 26
         targetSdk 34
-        versionCode 107
-        versionName "1.0.7"
+        versionCode 108
+        versionName "1.0.8"
         buildConfigField "String", "ASSISTANT_SERVICE_NAME", '"resto-fadey-printing-assistant"'
         buildConfigField "int", "DEFAULT_HTTP_PORT", "3002"
     }
