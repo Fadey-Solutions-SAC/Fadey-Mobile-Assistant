@@ -33,16 +33,8 @@ public final class CloudPoller {
     public static void pollOnce(Context context) {
         SecureStore store = FadeyApp.get().secureStore();
         if (!store.isLinked()) return;
-        // Cada ciclo confirma con el servidor si el sistema sigue en operación.
-        try {
-            OperationSync.Result op = OperationSync.sync(context);
-            if (op.ok && !op.operating && store.isFollowSystemOperation()) {
-                Log.i(TAG, "sistema cerrado · se omite cola");
-                return;
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "operation: " + e.getMessage());
-        }
+        // Encender y apagar lo decide la alarma (30 min desde las 5:00, 15 min desde las 7:00).
+        // Este ciclo solo atiende colas mientras el servicio está en marcha.
         String apiBase = store.getApiBase();
         String token = store.getToken();
         try {

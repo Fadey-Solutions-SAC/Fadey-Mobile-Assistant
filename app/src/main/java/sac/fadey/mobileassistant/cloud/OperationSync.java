@@ -16,8 +16,9 @@ import sac.fadey.mobileassistant.service.AssistantForegroundService;
 import sac.fadey.mobileassistant.service.OperationWatchScheduler;
 
 /**
- * Consulta al servidor si el POS/caja está en operación y arranca o detiene el FGS.
- * Así, al cerrar caja el asistente puede dormir; al abrir el sistema, el alarm/poll lo reactiva.
+ * Pregunta al servidor si hay un usuario activo.
+ * Si no hay nadie, apaga el servicio (después de confirmarlo).
+ * Si hay alguien, lo enciende.
  */
 public final class OperationSync {
     private static final String TAG = "OperationSync";
@@ -45,14 +46,47 @@ public final class OperationSync {
         if (fadey == null) return new Result(false, false, "app null");
         SecureStore store = fadey.secureStore();
         if (store == null || !store.isLinked()) {
+            OperationWatchScheduler.cancel(app);
             return new Result(false, false, "sin vínculo");
         }
-        OperationWatchScheduler.ensureScheduled(app);
         String base = ApiLinkHelper.normalizeApiBase(store.getApiBase());
         String token = ApiLinkHelper.normalizeToken(store.getToken());
         if (base.isEmpty() || token.isEmpty()) {
             return new Result(false, false, "api/token vacío");
         }
+        Result first = query(base, token, store);
+        if (!first.ok) {
+            OperationWatchScheduler.ensureScheduled(app);
+            return first;
+        }
+        boolean operating = first.operating;
+        if (!operating && store.isServiceEnabled() && store.isFollowSystemOperation()) {
+            Result confirm = query(base, token, store);
+            if (!confirm.ok) {
+                Log.i(TAG, "no se apaga: falló la confirmación");
+                OperationWatchScheduler.ensureScheduled(app);
+                return new Result(false, true, "se mantiene: no se confirmó el cierre");
+            }
+            if (confirm.operating) {
+                store.setServiceEnabled(true);
+                AssistantForegroundService.start(app);
+                OperationWatchScheduler.ensureScheduled(app);
+                return confirm;
+            }
+            operating = false;
+        }
+        if (operating) {
+            store.setServiceEnabled(true);
+            AssistantForegroundService.start(app);
+        } else if (store.isFollowSystemOperation()) {
+            AssistantForegroundService.stop(app);
+            store.setServiceEnabled(false);
+        }
+        OperationWatchScheduler.ensureScheduled(app);
+        return new Result(true, operating, store.getLastOperationDetail());
+    }
+
+    private static Result query(String base, String token, SecureStore store) {
         String url = base + "/assistant/operation-status";
         Request req = new Request.Builder()
                 .url(url)
@@ -64,29 +98,19 @@ public final class OperationSync {
             String body = resp.body() != null ? resp.body().string() : "";
             if (!resp.isSuccessful()) {
                 Log.w(TAG, "HTTP " + resp.code() + " " + body);
-                // No apagar el servicio por un fallo de red.
                 return new Result(false, false, "HTTP " + resp.code());
             }
             JSONObject json = new JSONObject(body.isEmpty() ? "{}" : body);
             boolean operating = json.optBoolean("operating", false);
-            int open = json.optInt("openRegisters", 0);
+            int users = json.optInt("activeUsers", 0);
             store.setLastOperationOperating(operating);
-            store.setLastOperationDetail(
-                    operating
-                            ? ("En operación · cajas abiertas: " + open)
-                            : "Sistema cerrado (sin caja / sin heartbeat POS)"
-            );
-            if (operating) {
-                store.setServiceEnabled(true);
-                AssistantForegroundService.start(app);
-            } else if (store.isFollowSystemOperation()) {
-                AssistantForegroundService.stop(app);
-                store.setServiceEnabled(false);
-            }
+            store.setLastOperationDetail(operating
+                    ? ("Usuarios activos: " + users)
+                    : "Sin usuarios activos");
             return new Result(true, operating, store.getLastOperationDetail());
         } catch (Exception e) {
             Log.w(TAG, "sync: " + e.getMessage());
-            return new Result(false, false, e.getMessage());
+            return new Result(false, false, e.getMessage() == null ? "error" : e.getMessage());
         }
     }
 }

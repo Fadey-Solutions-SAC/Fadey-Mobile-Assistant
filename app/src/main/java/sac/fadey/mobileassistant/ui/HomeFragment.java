@@ -58,7 +58,8 @@ public class HomeFragment extends Fragment {
             }
             String lan = "http://" + (ip.isEmpty() ? "IP_WIFI" : ip) + ":" + port;
             txtEndpoint.setText("URL para POS en misma Wi‑Fi (PC):\n" + lan
-                    + "\n\nEl servidor avisa si hay caja abierta; el APK se reactiva solo (~1–2 min)."
+                    + "\n\nSe enciende si hay un usuario en el sistema y se apaga si no hay nadie."
+                    + "\nConsulta: cada 30 min desde las 5:00 y cada 15 min desde las 7:00."
                     + (opDetail.isEmpty() ? "" : ("\nEstado: " + opDetail))
                     + "\nHealth: " + lan + "/health");
             txtLink.setText(linked

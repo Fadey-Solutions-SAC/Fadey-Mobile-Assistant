@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import sac.fadey.mobileassistant.FadeyApp;
-
 /** Arranque tras reboot, update del APK y quickboot Xiaomi. */
 public class BootCompletedReceiver extends BroadcastReceiver {
     private static final String TAG = "BootReceiver";
@@ -22,18 +20,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
                 || "android.intent.action.QUICKBOOT_POWERON".equals(action)
                 || "com.htc.intent.action.QUICKBOOT_POWERON".equals(action)) {
             try {
-                boolean enabled = true;
-                try {
-                    if (FadeyApp.get() != null && FadeyApp.get().secureStore() != null) {
-                        enabled = FadeyApp.get().secureStore().isServiceEnabled();
-                    }
-                } catch (Throwable ignored) {}
                 Context app = context.getApplicationContext();
                 sac.fadey.mobileassistant.service.OperationWatchScheduler.ensureScheduled(app);
-                if (enabled) {
-                    AssistantForegroundService.start(app);
-                }
-                // Preguntar al servidor si el sistema está en operación (reactiva tras cerrar/abrir caja).
                 new Thread(() -> {
                     try {
                         sac.fadey.mobileassistant.cloud.OperationSync.sync(app);
