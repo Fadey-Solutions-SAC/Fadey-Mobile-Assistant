@@ -16,9 +16,9 @@ import sac.fadey.mobileassistant.FadeyApp;
 
 /**
  * Consulta usuarios activos en hora de Lima.
- * De 5:00 a 7:00 cada 30 minutos. Desde las 7:00 cada 15.
- * Si ya está apagado antes de las 5:00, la próxima consulta es a las 5:00.
- * Si sigue encendido de madrugada, consulta cada 15 minutos para poder apagarse.
+ * Con usuarios: de 5:00 a 7:00 cada 30 minutos, desde las 7:00 cada 15.
+ * Si sigue encendido de madrugada, cada 15 minutos para poder apagarse.
+ * Si ya cerraron todos: cada 2 horas hasta las 5:00. Ahí arranca el ciclo de la mañana.
  */
 public final class OperationWatchScheduler {
     private static final String TAG = "OperationWatchSched";
@@ -69,9 +69,16 @@ public final class OperationWatchScheduler {
     /** Milisegundos hasta la próxima consulta, alineada al reloj. */
     static long nextDelayMillis(ZonedDateTime now, boolean serviceRunning) {
         int minuteOfDay = now.getHour() * 60 + now.getMinute();
-        if (minuteOfDay < 5 * 60 && !serviceRunning) {
-            ZonedDateTime atFive = now.toLocalDate().atTime(5, 0).atZone(LIMA);
-            return Math.max(1000L, Duration.between(now, atFive).toMillis());
+        if (!serviceRunning && (minuteOfDay < 5 * 60 || minuteOfDay >= 7 * 60)) {
+            int mod = minuteOfDay % 120;
+            int add = mod == 0 ? 120 : 120 - mod;
+            ZonedDateTime nextTwo = now.plusMinutes(add).withSecond(0).withNano(0);
+            ZonedDateTime atFive = minuteOfDay < 5 * 60
+                    ? now.toLocalDate().atTime(5, 0).atZone(LIMA)
+                    : now.toLocalDate().plusDays(1).atTime(5, 0).atZone(LIMA);
+            long twoMs = Duration.between(now, nextTwo).toMillis();
+            long fiveMs = Duration.between(now, atFive).toMillis();
+            return Math.max(1000L, Math.min(twoMs, fiveMs));
         }
         int step = minuteOfDay < 7 * 60 ? 30 : 15;
         if (minuteOfDay < 5 * 60) step = 15;

@@ -33,7 +33,7 @@ public final class CloudPoller {
     public static void pollOnce(Context context) {
         SecureStore store = FadeyApp.get().secureStore();
         if (!store.isLinked()) return;
-        // Encender y apagar lo decide la alarma (30 min desde las 5:00, 15 min desde las 7:00).
+        // Encender y apagar lo decide la alarma. Con usuarios: 30 min desde las 5:00 y 15 min desde las 7:00. Si ya cerraron: cada 2 horas hasta las 5:00.
         // Este ciclo solo atiende colas mientras el servicio está en marcha.
         String apiBase = store.getApiBase();
         String token = store.getToken();

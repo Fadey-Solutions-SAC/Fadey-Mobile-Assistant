@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
             String lan = "http://" + (ip.isEmpty() ? "IP_WIFI" : ip) + ":" + port;
             txtEndpoint.setText("URL para POS en misma Wi‑Fi (PC):\n" + lan
                     + "\n\nSe enciende si hay un usuario en el sistema y se apaga si no hay nadie."
-                    + "\nConsulta: cada 30 min desde las 5:00 y cada 15 min desde las 7:00."
+                    + "\nConsulta: con usuarios, cada 30 min desde las 5:00 y cada 15 min desde las 7:00. Si ya cerraron, cada 2 horas hasta las 5:00."
                     + (opDetail.isEmpty() ? "" : ("\nEstado: " + opDetail))
                     + "\nHealth: " + lan + "/health");
             txtLink.setText(linked
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment {
                             String d = FadeyApp.get().secureStore().getLastOperationDetail();
                             txtEndpoint.setText("URL para POS en misma Wi‑Fi (PC):\n" + lan
                                     + "\n\nSe enciende si hay un usuario en el sistema y se apaga si no hay nadie."
-                                    + "\nConsulta: cada 30 min desde las 5:00 y cada 15 min desde las 7:00."
+                                    + "\nConsulta: con usuarios, cada 30 min desde las 5:00 y cada 15 min desde las 7:00. Si ya cerraron, cada 2 horas hasta las 5:00."
                                     + (d.isEmpty() ? "" : ("\nEstado: " + d))
                                     + "\nHealth: " + lan + "/health");
                         }
