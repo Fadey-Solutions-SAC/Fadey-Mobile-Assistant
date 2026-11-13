@@ -52,7 +52,7 @@ public class HomeFragment extends Fragment {
             if (operating) {
                 txtStatus.setText("Sistema en operación · asistente activo");
             } else if (linked) {
-                txtStatus.setText("Esperando sistema (abra caja en el POS)");
+                txtStatus.setText("Esperando usuarios en el sistema");
             } else {
                 txtStatus.setText("Servicio listo · falta vincular");
             }
@@ -120,15 +120,20 @@ public class HomeFragment extends Fragment {
                         boolean operating = linked && FadeyApp.get().secureStore().getLastOperationOperating();
                         txtStatus.setText(operating
                                 ? "Sistema en operación · asistente activo"
-                                : (linked ? "Esperando sistema (abra caja en el POS)" : "Servicio listo · falta vincular"));
+                                : (linked ? "Esperando usuarios en el sistema" : "Servicio listo · falta vincular"));
                         if (txtLink != null && linked) {
                             txtLink.setText("Nube vinculada: " + FadeyApp.get().secureStore().getApiBase());
                         }
                         if (txtEndpoint != null && linked) {
+                            String ip = LocalHttpServer.detectLanIp();
+                            int port = BuildConfig.DEFAULT_HTTP_PORT;
+                            String lan = "http://" + (ip.isEmpty() ? "IP_WIFI" : ip) + ":" + port;
                             String d = FadeyApp.get().secureStore().getLastOperationDetail();
-                            if (!d.isEmpty()) {
-                                txtEndpoint.append("\nEstado: " + d);
-                            }
+                            txtEndpoint.setText("URL para POS en misma Wi‑Fi (PC):\n" + lan
+                                    + "\n\nSe enciende si hay un usuario en el sistema y se apaga si no hay nadie."
+                                    + "\nConsulta: cada 30 min desde las 5:00 y cada 15 min desde las 7:00."
+                                    + (d.isEmpty() ? "" : ("\nEstado: " + d))
+                                    + "\nHealth: " + lan + "/health");
                         }
                     }
                 });
