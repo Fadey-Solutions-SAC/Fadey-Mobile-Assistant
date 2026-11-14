@@ -8,7 +8,7 @@ import android.util.Log;
 import sac.fadey.mobileassistant.cloud.OperationSync;
 import sac.fadey.mobileassistant.update.AppUpdater;
 
-/** Despierta cada pocos minutos para preguntar al servidor si el sistema está en operación. */
+/** Despierta para consultar usuarios. Encendido, solo cuando intenta apagarse. */
 public class OperationWatchReceiver extends BroadcastReceiver {
     private static final String TAG = "OperationWatch";
     public static final String ACTION = "sac.fadey.mobileassistant.ACTION_OPERATION_WATCH";
